@@ -1,11 +1,10 @@
 Package: FAPCAcaba0009
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Factor Analysis: PCA Method
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Tanner Cabaniss
+Maintainer: Tanner Cabaniss <cabanisstanner@gmail.com>
+Description: This package contains functions for completing factor analysis with the principle component analysis method.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
