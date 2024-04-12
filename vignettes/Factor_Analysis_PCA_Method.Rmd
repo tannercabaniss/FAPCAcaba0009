@@ -1,0 +1,99 @@
+---
+title: "Factor_Analysis_PCA_Method"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Factor_Analysis_PCA_Method}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(FAPCAcaba0009)
+```
+
+# Introduction
+
+# Tasks
+We were asked to accomplish several tasks including some proofs, writing functions, and completing an example using that function.
+
+## Task 1
+Prove the following... $$Cov(X,F) = L$$
+
+We are provided two starting points... $$X-\mu = LF + \epsilon \space \space and \space \space Cov(X) = LL' + \Psi$$
+
+Let's start by writing out the covariance in its current state... $$Cov(X,F) = E[(X-\mu_X)(F-\mu_{F})']$$
+
+We can solve the mean centered equation of $X$ for $X$ yielding... $$X = LF + \epsilon + \mu_{X}$$
+
+Now let's substitute this for $X$ in our covariance equation... $$Cov(X,F) = E[(LF + \epsilon + \mu_X - \mu_X)(F-\mu_F)']$$
+
+We can see that the $\mu_X$ variables will cancel. Further, we know that the expected value of $\epsilon$ should be 0 as it is independent of F leaving... $$Cov(X,F) = E[(LF)(F-\mu_F)']$$
+
+As the weightings $L$ are constant the $L$ can be extracted from the equation and put in front. Additionally, we can distribute the transpose into the parentheses as follows... $$Cov(X,F) = LE[FF' - F\mu_F']$$
+
+In our assumptions for the orthogonal model we stated that $E[F] = 0$ and $Cov(F) = E[FF'] = I$. Therefore, we can say that... $$Cov(X,F) = LE[FF' - F\mu_F'] = L(E[FF'] - E[F\mu_F']) = L(I-0) = L(I)$$
+
+We know that any matrix multiplied by the identity matrix, $I$, is itself so... $$Cov(X,F) = L(I) => Cov(X,F) = L$$
+
+## Task 2
+Prove the following... $$Cov(X_i,X_k) = l_{i1}l_{k1} + ... + l_{im}l_{km} \space \space i \ne k$$
+
+Use the above to show... $$Var(X_i) = l_{i1}^2 + ... + l_{im} + \psi_i$$
+
+Let's start with the covariance definition... $$Cov(X_i, X_k) = E[(X_i - \mu_i)(X_k - \mu_k)]$$
+
+Now let's represent $X_i$ and $X_k$ as summations... $$X_i = \Sigma_{j=1}^{m} l_{ij}F_j + \epsilon_i$$ $$X_k = \Sigma_{j=1}^{m} l_{kj}F_j + \epsilon_k$$
+
+We can substitute these summations back into our covariance equation... $$Cov(X_i, X_k) = E[(\Sigma_{j=1}^{m} l_{ij}F_j + \epsilon_i -\mu_i)(\Sigma_{j=1}^{m} l_{kj}F_j + \epsilon_k - \mu_k)]$$
+
+From our assumptions for the orthogonal model we know that $E[\epsilon] = 0$. Therefore, we can simplify the expression to be... $$Cov(X_i, X_k) = E[(\Sigma_{j=1}^{m} l_{ij}F_j -\mu_i)(\Sigma_{j=1}^{m} l_{kj}F_j - \mu_k)]$$
+
+Since $l_{ij}$ and $l_{kj}$ are loadings and therefore constant we can extract them from the equation... $$Cov(X_i,X_k) = \Sigma_{j=1}^{m} l_{ij}l_{kj} E[(F_j - \mu{ij})(F_k - \mu{ik})]$$
+
+For $i \ne k$ the $E[(F_j - \mu_{ij})(F_k - \mu_{kj})] = I$. Therefore, we can simplify our previous equation to now be $$Cov(X_i,X_k) = \Sigma_{j=1}^{m} l_{ij}l_{kj} I => Cov(X_i,X_k) = \Sigma_{j=1}^{m} l_{ij}l_{kj}$$
+
+Now to show that... $$Var(X_i) = l_{i1}^2 + ... + l_{im} + \psi_i$$
+
+We take the case where $i=k$ as $Cov(X,X) = Var(X) + \Psi$ where $\Psi$ is the unique variance for the variable $X$. According to our derived equation for $Cov(X_i, X_k)$ we can say that $$Cov(X_i,X_i) = \Sigma_{j=1}^{m} l_{ij}^2 + \psi_i$$
+
+The $\Psi$ only occurs when the two variables of the $Cov()$ expression are not independent e.g., $Cov(X_i,X_i)$ as $X_i$ is linearly dependent with $X_i$
+
+## Task 3
+In this part, we were tasked with building a function which takes in the sample var-cov matrix, $S$, or the sample correlation matrix, $R$ as well as the number of factors, $m$. Then, the equation will produce a heat map of the correlation matrix, $R$, as well as printing a list containing the proportion of total variance due to the $j^{th}$ factor, the matrix $\Psi$, the residual matrix, and the communalities. The code for the function can be found in the R sub directory under the script myfacta().
+
+## Task 4
+Follow Example 9.3 from the book.
+```{r, fig.align='center', fig.width=8, fig.height=6}
+R = T9_3
+m = 2
+results <- myfacta(R=R, m=m)
+
+cat("Heatmap of Correlation Matrix\n")
+print(results$Heatmap)
+
+cat("\nProportion of total variance due to the jth factor\n")
+print(results$TotalVar)
+
+cat("\nEstimated loadings for ", m, " factors\n", sep="")
+print(results$Loadings)
+
+cat("\nCommunalities\n")
+print(results$Communalities)
+
+cat("\nPsi matrix\n")
+print(results$PsiMat)
+
+cat("\nResidual matrix\n")
+print(results$ResMat)
+
+cat("\nCorrelation matrix\n")
+print(results$CorMat)
+```
+We can clearly see the alignment with our results and the results presented in the book. By the comparison of the residual and original correlation matrix, we can see a good fitment of our 2 factor based description with the original 5 observed variable based description. While the loadings align with the results in the book, they do not do a great job simplifying the correlations between the variables as they have not been approprietly rotated. This rotation is the main addition I would consider for improving this code as rotations of the loadings and factors are essential for generating factors which are easily interpretted.
